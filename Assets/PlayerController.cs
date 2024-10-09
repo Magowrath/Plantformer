@@ -9,7 +9,7 @@ public class PlayerController : MonoBehaviour
     public float movementMultiplyer = 1f;
     public float jumpMultiplyer = 1f;
     public int playerHealth = 100;
-    public int playerMaxHealth = 125;
+    public int playerMaxHealth = 100;
 
 
 
@@ -27,6 +27,18 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.Space))
+        {
+            
+        }
+        if (Input.GetKey(KeyCode.A))
+        {
+
+        }
+        if (Input.GetKey(KeyCode.D))
+        {
+
+        }
+        if (Input.GetKey(KeyCode.S))
         {
 
         }
