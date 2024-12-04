@@ -1,8 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using JetBrains.Annotations;
+using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class PlayerController : MonoBehaviour
 {
@@ -10,9 +9,12 @@ public class PlayerController : MonoBehaviour
     public float jumpMultiplyer = 1f;
     public int playerHealth = 100;
     public int playerMaxHealth = 100;
-
-
-
+    private Vector3 moveVector;
+    private Rigidbody2D myRigidBody;
+    private void Awake()
+    {
+        myRigidBody = GetComponent<Rigidbody2D>();
+    }
     bool playerJumping = false;
     public bool playerHealthDebug = false; 
 
@@ -23,25 +25,32 @@ public class PlayerController : MonoBehaviour
         playerHealth = playerMaxHealth;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.Space))
+        //===============================================================================================================================================================================
+        //                +++ Player Movement +++
+        //===============================================================================================================================================================================
+        moveVector = new Vector3 (0f, 0f, 0f);
+        
+        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.UpArrow))
         {
+            if (!playerJumping)
+            {
+                myRigidBody.AddForce(transform.up * jumpMultiplyer, ForceMode2D.Impulse); 
+            }
+        }
+        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
+        {
+            moveVector += new Vector3(-1,0,0) * movementMultiplyer;
+        }
+        if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
+        {
+            moveVector += new Vector3(1,0,0) * movementMultiplyer;
+        }
+        // if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
+        // {
             
-        }
-        if (Input.GetKey(KeyCode.A))
-        {
-
-        }
-        if (Input.GetKey(KeyCode.D))
-        {
-
-        }
-        if (Input.GetKey(KeyCode.S))
-        {
-
-        }
+        // }
     }
 
 //===============================================================================================================================================================================
