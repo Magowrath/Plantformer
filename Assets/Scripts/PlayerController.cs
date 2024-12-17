@@ -5,8 +5,8 @@ public class PlayerController : MonoBehaviour
 {
     public float movementMultiplyer;
     public float jumpMultiplyer;
-    public int health {get; private set;}
-    public int maxHealth {get; private set;} = 3;
+    public float health {get; private set;}
+    public float maxHealth {get; private set;} = 3;
     private Rigidbody2D myRigidBody;
     private BoxCollider2D boxCollider;
     [SerializeField] private LayerMask groundLayer;
@@ -84,6 +84,7 @@ public class PlayerController : MonoBehaviour
             health = 0;
             instantDeath();
         }
+        Debug.Log(health);
     }
 
      public void instantDeath(){
