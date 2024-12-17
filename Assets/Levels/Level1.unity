@@ -226,7 +226,7 @@ GameObject:
   - component: {fileID: 1942058213}
   - component: {fileID: 1942058211}
   - component: {fileID: 1942058210}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Platform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -392,10 +392,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec1236ec41483c246b68e08ce750e643, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementMultiplyer: 2
+  movementMultiplyer: 5
   jumpMultiplyer: 10
   playerHealth: 100
   playerMaxHealth: 100
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 64
   playerHealthDebug: 0
 --- !u!212 &2105315894
 SpriteRenderer:
@@ -464,7 +467,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 2.5
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2

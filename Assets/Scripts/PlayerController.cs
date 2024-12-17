@@ -1,27 +1,26 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
+
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public float movementMultiplyer = 1f;
-    public float jumpMultiplyer = 1f;
+    public float movementMultiplyer = 5f;
+    public float jumpMultiplyer = 5f;
     public int playerHealth = 100;
     public int playerMaxHealth = 100;
-    private Vector3 moveVector;
     private Rigidbody2D myRigidBody;
+    private BoxCollider2D boxCollider;
+    [SerializeField] private LayerMask groundLayer;
     private void Awake()
     {
         myRigidBody = GetComponent<Rigidbody2D>();
+        boxCollider = GetComponent<BoxCollider2D>();
     }
-    bool playerJumping = false;
     public bool playerHealthDebug = false; 
 
     // Start is called before the first frame update
     void Start()
     {
-        movementMultiplyer = 1f;
+        movementMultiplyer = 5f;
         playerHealth = playerMaxHealth;
     }
 
@@ -30,27 +29,25 @@ public class PlayerController : MonoBehaviour
         //===============================================================================================================================================================================
         //                +++ Player Movement +++
         //===============================================================================================================================================================================
-        moveVector = new Vector3 (0f, 0f, 0f);
-        
-        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.UpArrow))
+        float HorizontalInput  = Input.GetAxis("Horizontal");   
+
+        myRigidBody.velocity = new Vector2 (Input.GetAxis("Horizontal") * movementMultiplyer, myRigidBody.velocity.y); //Takes the player input along the horizontal axis and adds that to the players current velocity * movementMultiplyer
+    
+        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.UpArrow)) 
         {
-            if (!playerJumping)
+            if (!isAirborne())
             {
-                myRigidBody.AddForce(transform.up * jumpMultiplyer, ForceMode2D.Impulse); 
+                myRigidBody.AddForce(transform.up * jumpMultiplyer, ForceMode2D.Impulse); //Applies upforce once when jump buttons are pressed
             }
         }
-        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
-        {
-            moveVector += new Vector3(-1,0,0) * movementMultiplyer;
-        }
-        if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
-        {
-            moveVector += new Vector3(1,0,0) * movementMultiplyer;
-        }
-        // if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
-        // {
-            
-        // }
+
+        //Scales the player sprite along the x axis to flip it into facing the right direction.
+        if(HorizontalInput > 0.01f)
+            transform.localScale = Vector3.one * 5;
+        else if(HorizontalInput < -0.01f)
+            transform.localScale = new Vector3(-5,5,5);
+
+
     }
 
 //===============================================================================================================================================================================
@@ -81,8 +78,19 @@ public class PlayerController : MonoBehaviour
         else{
             return 1;
         }
+    }
 
-        
+    private bool isAirborne()
+    {
+        RaycastHit2D raycastHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0, Vector2.down, 0.1f, groundLayer);
+        if (raycastHit.collider == null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
 }
