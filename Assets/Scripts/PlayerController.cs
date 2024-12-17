@@ -3,10 +3,10 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public float movementMultiplyer = 5f;
-    public float jumpMultiplyer = 5f;
-    public int playerHealth = 100;
-    public int playerMaxHealth = 100;
+    public float movementMultiplyer;
+    public float jumpMultiplyer;
+    public int health {get; private set;}
+    public int maxHealth {get; private set;} = 3;
     private Rigidbody2D myRigidBody;
     private BoxCollider2D boxCollider;
     [SerializeField] private LayerMask groundLayer;
@@ -21,7 +21,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         movementMultiplyer = 5f;
-        playerHealth = playerMaxHealth;
+        health = maxHealth;
     }
 
     private void Update()
@@ -41,12 +41,23 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+        myRigidBody.rotation = 0;
+
         //Scales the player sprite along the x axis to flip it into facing the right direction.
         if(HorizontalInput > 0.01f)
+        {
             transform.localScale = Vector3.one * 5;
-        else if(HorizontalInput < -0.01f)
-            transform.localScale = new Vector3(-5,5,5);
+        }
 
+        else if(HorizontalInput < -0.01f)
+        {
+            transform.localScale = new Vector3(-5,5,5);
+        }
+
+        if(Input.GetKeyDown(KeyCode.E))
+        {
+            loseHealth(1);
+        }
 
     }
 
@@ -55,29 +66,28 @@ public class PlayerController : MonoBehaviour
 //===============================================================================================================================================================================
 
     public void loseHealth(int healthLost){
-        if (healthLost <= playerHealth){
-            instantDeath();
+        health -= healthLost;
+        checkHealth();
         }
-        else {
-            playerHealth -= healthLost;
-        }
+
+    public void gainHealth(int healthGain){
+        health += healthGain;
         checkHealth();
     }
 
-    public void instantDeath(){}
-    int checkHealth(){
 
-        if (playerHealth > playerMaxHealth){
-            playerHealth = playerMaxHealth;
-            return 2;
+    void checkHealth(){     //Limits players health to within certain values
+        if (health > maxHealth){
+            health = maxHealth;
         }
-        else if (playerHealth < 0){
-            playerHealth = 0;
-            return 0;
+        if (health <= 0){
+            health = 0;
+            instantDeath();
         }
-        else{
-            return 1;
-        }
+    }
+
+     public void instantDeath(){
+        //Code that runs on player death
     }
 
     private bool isAirborne()
@@ -92,5 +102,4 @@ public class PlayerController : MonoBehaviour
             return false;
         }
     }
-
 }
