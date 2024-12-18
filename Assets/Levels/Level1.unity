@@ -4909,6 +4909,8 @@ MonoBehaviour:
   player: {fileID: 2105315893}
   victoryScreen: {fileID: 237872046}
   splatScreen: {fileID: 63946367}
+  TotalHealth: {fileID: 768380935}
+  CurrentHealth: {fileID: 663784304}
 --- !u!1 &2105315891
 GameObject:
   m_ObjectHideFlags: 0

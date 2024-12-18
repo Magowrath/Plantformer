@@ -1,8 +1,13 @@
 using Unity.VisualScripting;
 using UnityEngine;
-using static UIManager;
+using UnityEngine.SceneManagement;
 public class PlayerController : MonoBehaviour
 {
+
+//===============================================================================================================================================================================
+//          Declerations
+//===============================================================================================================================================================================
+
     public float movementMultiplyer;
     public bool isAlive {get; private set;} = true;
     public float jumpMultiplyer;
@@ -10,7 +15,6 @@ public class PlayerController : MonoBehaviour
     public float maxHealth {get; private set;} = 3;
     private Rigidbody2D myRigidBody;
     private BoxCollider2D boxCollider;
-    private SpriteRenderer spriteRenderer;
     public UIManager MyUIManager;
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private Sprite deathSprite;
@@ -18,8 +22,6 @@ public class PlayerController : MonoBehaviour
     {
         myRigidBody = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
-        spriteRenderer = GetComponent<SpriteRenderer>();
-
     }
 
     public bool playerHealthDebug = false; 
@@ -30,12 +32,17 @@ public class PlayerController : MonoBehaviour
         MyUIManager = GameObject.FindGameObjectWithTag("TagUIManager").GetComponent<UIManager>();
         MyUIManager.MethodA(gameObject);
     }
-
+//===============================================================================================================================================================================
+//      Update
+//===============================================================================================================================================================================
     private void Update()
     {
         if (isAlive){
             playerMovement();
+        }
 
+        if (Input.GetKeyDown(KeyCode.R)){
+            restartScene();
         }
 
         if (Input.GetKeyDown(KeyCode.E)){
@@ -66,23 +73,20 @@ public class PlayerController : MonoBehaviour
             health = 0;
             playerDeath();
         }
-        Debug.Log(health);
     }
 
      public void playerDeath(){
-        spriteRenderer.sprite = deathSprite;
-        Debug.Log("PlayerController has been killed");
         isAlive = false;
+        MyUIManager.UI_UpdateSplat(true);
     }
 
-
-
+//===============================================================================================================================================================================
+//                +++ Player Movement +++
+//===============================================================================================================================================================================
 
     private void playerMovement()
     {
-        //===============================================================================================================================================================================
-        //                +++ Player Movement +++
-        //===============================================================================================================================================================================
+        
         float HorizontalInput  = Input.GetAxis("Horizontal");   
 
         myRigidBody.velocity = new Vector2 (Input.GetAxis("Horizontal") * movementMultiplyer, myRigidBody.velocity.y); //Takes the player input along the horizontal axis and adds that to the players current velocity * movementMultiplyer
@@ -120,4 +124,14 @@ public class PlayerController : MonoBehaviour
             return false;
         }
     }
+
+//===============================================================================================================================================================================
+//          Extras
+//===============================================================================================================================================================================
+    
+    public void restartScene()
+    {   
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
 }
