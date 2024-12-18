@@ -8,16 +8,12 @@ public class CameraController : MonoBehaviour
 
 private float cameraOffset;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
     // Update is called once per frame
     void Update()
     {
         transform.position = new Vector3(transform.position.x, player.position.y + cameraOffset, transform.position.z);
+        //Moves the camera to follow a point just above the player in the y axis. it is also locked in the x and z axis as to thesure the camera doesn't wonder off out of bounds
         cameraOffset = Mathf.Lerp(cameraOffset, cameraLead, Time.deltaTime * cameraSpeed );
+        //Uses a linear Interpolation to smooth the camera movements.
     }
 }

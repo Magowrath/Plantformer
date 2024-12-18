@@ -1,3 +1,7 @@
+/*================================================================================================================================================================================
+        
+
+================================================================================================================================================================================*/
 using UnityEngine;  //Boilerplate
 using UnityEngine.SceneManagement; //Needed for scene reset.
 
@@ -157,6 +161,7 @@ public class PlayerController : MonoBehaviour  //Boilerplate
         anim.SetBool("Walking", HorizontalInput != 0);
 
     }
+
 
     private bool isAirborne()
     {
