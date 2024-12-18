@@ -18,7 +18,6 @@ public class UIManager : MonoBehaviour
     {
         victoryScreen.fillAmount = 0;
         splatScreen.fillAmount = 0;
-        MethodA(gameObject);
     }
 
     // Update is called once per frame
@@ -56,10 +55,5 @@ public class UIManager : MonoBehaviour
                 splatScreen.fillAmount = 0;
             }
         else {Debug.Log("Error: UI_UpdateSplat recieved non bool argument");}
-    }
-
-    public void MethodA(GameObject g)
-    {
-        Debug.Log("Object " +g.name+ " has called Method A");
     }
 }

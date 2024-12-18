@@ -1,6 +1,8 @@
+using System.Runtime.InteropServices.WindowsRuntime;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.SocialPlatforms.Impl;
 public class PlayerController : MonoBehaviour
 {
 
@@ -12,25 +14,28 @@ public class PlayerController : MonoBehaviour
     public bool isAlive {get; private set;} = true;
     public float jumpMultiplyer;
     public float health {get; private set;}
+    public float score = 0;
+    public float maxScore = 3;
     public float maxHealth {get; private set;} = 3;
     private Rigidbody2D myRigidBody;
     private BoxCollider2D boxCollider;
     public UIManager MyUIManager;
-    [SerializeField] private LayerMask groundLayer;
-    [SerializeField] private Sprite deathSprite;
+    private Animator anim;
+    [SerializeField] private LayerMask groundLayer; //Serialization makes private variables load from memory, allowing for data to be seved outside runtime.
     private void Awake()
     {
+        //Grabs referances from self
         myRigidBody = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
-    }
+        anim = GetComponent<Animator>();
 
-    public bool playerHealthDebug = false; 
+        //Grabs Referances scripts on other GameObjects
+        MyUIManager = GameObject.FindGameObjectWithTag("TagUIManager").GetComponent<UIManager>();
+    }
 
     void Start()
     {
-        health = maxHealth;
-        MyUIManager = GameObject.FindGameObjectWithTag("TagUIManager").GetComponent<UIManager>();
-        MyUIManager.MethodA(gameObject);
+        health = maxHealth; //Does what it says on the tin
     }
 //===============================================================================================================================================================================
 //      Update
@@ -46,8 +51,12 @@ public class PlayerController : MonoBehaviour
         }
 
         if (Input.GetKeyDown(KeyCode.E)){
+            gainScore(1);
+        }
+        if (Input.GetKeyDown(KeyCode.Q)){
             loseHealth(1);
         }
+        anim.SetBool("Dead", !isAlive);
     }
 
 //===============================================================================================================================================================================
@@ -64,7 +73,6 @@ public class PlayerController : MonoBehaviour
         checkHealth();
     }
 
-
     void checkHealth(){     //Limits players health to within certain values
         if (health > maxHealth){
             health = maxHealth;
@@ -78,6 +86,31 @@ public class PlayerController : MonoBehaviour
      public void playerDeath(){
         isAlive = false;
         MyUIManager.UI_UpdateSplat(true);
+    }
+
+//===============================================================================================================================================================================
+//                +++ Player Score +++
+//===============================================================================================================================================================================
+
+    public void gainScore(int scoreGained){
+        score += scoreGained;
+        checkScore();
+    }
+
+    void checkScore(){     //Limits players health to within certain values
+        if (score >= 3f){
+            score = 3f;
+            playerVictory();
+        }
+        else if (score <= 0){
+            score = 0;
+        }
+    }
+
+    void playerVictory()
+    {   
+        isAlive = false;
+        MyUIManager.UI_UpdateVictory(true);
     }
 
 //===============================================================================================================================================================================
@@ -99,9 +132,10 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        myRigidBody.rotation = 0;
+        myRigidBody.rotation = 0; //prevents player from falling on its side 
 
         //Scales the player sprite along the x axis to flip it into facing the right direction.
+
         if(HorizontalInput > 0.01f)
         {
             transform.localScale = Vector3.one ;
@@ -111,7 +145,13 @@ public class PlayerController : MonoBehaviour
         {
             transform.localScale = new Vector3(-1,1,1);
         }
+        
+        //Set Animator params
+
+        anim.SetBool("Walking", HorizontalInput != 0);
+
     }
+
     private bool isAirborne()
     {
         RaycastHit2D raycastHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0, Vector2.down, 0.1f, groundLayer);
