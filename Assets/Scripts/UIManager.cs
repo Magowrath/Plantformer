@@ -1,9 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
-using System.Runtime.CompilerServices;
-using System.Data;
+
 
 public class UIManager : MonoBehaviour
 {

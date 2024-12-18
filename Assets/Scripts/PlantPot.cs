@@ -1,17 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.SocialPlatforms.Impl;
 
 public class PlantPot : MonoBehaviour
 {
 
-    [SerializeField] private float scoreValue;
+    [SerializeField] private int scoreValue;
     public PlayerController player;
     private bool scored = false;
-
-    
     
     // Start is called before the first frame update
     private void OnTriggerEnter2D(Collider2D collision)
@@ -19,7 +13,7 @@ public class PlantPot : MonoBehaviour
         if (collision.tag == "TagPlayer")
         {
             if (!scored){
-                player.gainScore(1);
+                player.gainScore(scoreValue);
                 scored = true;
             }
         }

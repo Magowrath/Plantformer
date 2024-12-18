@@ -1,27 +1,30 @@
-using System.Runtime.InteropServices.WindowsRuntime;
-using Unity.VisualScripting;
-using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.SocialPlatforms.Impl;
-public class PlayerController : MonoBehaviour
+using UnityEngine;  //Boilerplate
+using UnityEngine.SceneManagement; //Needed for scene reset.
+
+public class PlayerController : MonoBehaviour  //Boilerplate
 {
 
 //===============================================================================================================================================================================
 //          Declerations
 //===============================================================================================================================================================================
 
-    public float movementMultiplyer;
-    public bool isAlive {get; private set;} = true;
-    public float jumpMultiplyer;
-    public float health {get; private set;}
-    public float score = 0;
-    public float maxScore = 3;
-    public float maxHealth {get; private set;} = 3;
+    public float movementMultiplyer;  //Linear scale on the players movement speed.
+    public bool isAlive {get; private set;} = true; //Used by the animator to set the players dead state, updated by playerVictory() & playerDeath() functions.
+    public float jumpMultiplyer; //linear scale on the players jump force.
+    public float health {get; private set;} //The players current health.
+    public float score ; //Players current score, updated by gainScore(), often called by plantPot.cs.
+    public float maxScore ; //The players target score, this initates the win condition to trigger playerVictory().
+    public float maxHealth {get; private set;} = 3; //Players maximum health, current UI will accomodate between 1 & 5.
+
+    //A number of referances for components of the player gameObject
     private Rigidbody2D myRigidBody;
     private BoxCollider2D boxCollider;
-    public UIManager MyUIManager;
+    public UIManager MyUIManager; //A linking step to allow for calling UI functions within the PlayerController
     private Animator anim;
     [SerializeField] private LayerMask groundLayer; //Serialization makes private variables load from memory, allowing for data to be seved outside runtime.
+    
+    //Awake is called before Start and runs whenever the script is loaded even if it's disabled. I have used it primarially for obtaing referances to make sure they are
+    //loaded before anything else happens.
     private void Awake()
     {
         //Grabs referances from self
@@ -35,27 +38,26 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
-        health = maxHealth; //Does what it says on the tin
+        health = maxHealth; //Does what it says on the tin, ensures players starting health always matches the maximum health for the scene.
+        maxScore = 3;
+        score = 0;
     }
 //===============================================================================================================================================================================
 //      Update
 //===============================================================================================================================================================================
     private void Update()
     {
+        //While the player is alive runs the movement script
         if (isAlive){
             playerMovement();
         }
 
+        //Watches for keypresses on R for the reset code
         if (Input.GetKeyDown(KeyCode.R)){
             restartScene();
         }
 
-        if (Input.GetKeyDown(KeyCode.E)){
-            gainScore(1);
-        }
-        if (Input.GetKeyDown(KeyCode.Q)){
-            loseHealth(1);
-        }
+        //Update player animation when health drops to 0
         anim.SetBool("Dead", !isAlive);
     }
 
@@ -63,17 +65,18 @@ public class PlayerController : MonoBehaviour
 //                +++ Player Health +++
 //===============================================================================================================================================================================
 
+    //Simple function for reducing the players health.
     public void loseHealth(int healthLost){
         health -= healthLost;
         checkHealth();
         }
-
+    //Similar function for gaining health, currently unused.
     public void gainHealth(int healthGain){
         health += healthGain;
         checkHealth();
     }
 
-    void checkHealth(){     //Limits players health to within certain values
+    void checkHealth(){     //Manually clamps the health value and triggers playerDeath() when health hits 0.
         if (health > maxHealth){
             health = maxHealth;
         }
@@ -83,6 +86,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    //Updates isAlive and calls the death screen from the UIManager.
      public void playerDeath(){
         isAlive = false;
         MyUIManager.UI_UpdateSplat(true);
@@ -92,14 +96,16 @@ public class PlayerController : MonoBehaviour
 //                +++ Player Score +++
 //===============================================================================================================================================================================
 
+    //Simple script for gaining score.
     public void gainScore(int scoreGained){
         score += scoreGained;
         checkScore();
     }
 
-    void checkScore(){     //Limits players health to within certain values
-        if (score >= 3f){
-            score = 3f;
+
+    void checkScore(){     //Limits players score to within certain values and calls playerVictory when 
+        if (score >= maxScore){
+            score = 3;
             playerVictory();
         }
         else if (score <= 0){
